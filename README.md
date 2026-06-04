@@ -8,10 +8,10 @@ Contents:
 - deno / typescript for api service + data operations
 - all lives on vercel for frontend cdn + postgres for db + deno
 
-#to run it locally for testing + dev
+# to run it locally for testing + dev
 npm run dev
 
-#dev guidance
+# dev guidance
 when you code, please make a pull request and leave it open first. do not merge it until deniz takes a look
 
-#please do not commit to main i will end myself please 
+# please do not commit to main i will end myself please 
