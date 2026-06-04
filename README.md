@@ -6,7 +6,7 @@ Contents:
 - Next.js frontend with api handling
 - Postgres db
 - deno / typescript for api service + data operations
-- all lives on vercel for frontend cdn + postgres for db + deno
+- all lives on vercel for frontend cdn // supabase for db + deno
 
 # to run it locally for testing + dev
 npm run dev
