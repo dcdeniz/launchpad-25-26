@@ -73,7 +73,7 @@ export default async function HomePage() {
 
         {routes.length > 0 ? (
           <div className="space-y-3">
-            {(routes as Route[]).map((route, i) => (
+            {(routes as Route[]).slice(0, 6).map((route, i) => (
               <div key={route.id} className={`animate-fade-up stagger-${Math.min(i + 1, 5)}`}>
                 <RouteCard id={route.id} name={route.route_name} />
               </div>

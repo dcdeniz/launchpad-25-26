@@ -2,16 +2,24 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-function getBadgeColor(name: string) {
-  if (name.includes('9'))  return 'bg-[#e63946]'
-  if (name.includes('16')) return 'bg-[#457b9d]'
-  if (name.includes('82')) return 'bg-[#2d6a4f]'
-  return 'bg-[#6b4c9a]'
+const ROUTE_COLORS: Record<string, string> = {
+  T1: '#00a699', T2: '#00a699',
+  SN1: '#c0392b',
+  '9': '#e63946', '16': '#457b9d', '82': '#2d6a4f',
+  '11A': '#d97706', '11C': '#d97706',
+  '45': '#7c3aed', '126': '#1e3a5f',
 }
 
-function getRouteNumber(name: string) {
-  const match = name.match(/\d+/)
-  return match ? match[0] : name.slice(0, 2)
+function getRouteIdentifier(name: string): string {
+  const beforeDash = name.split(' — ')[0].trim()
+  const parts = beforeDash.split(' ')
+  return parts[parts.length - 1] ?? name.slice(0, 4)
+}
+
+function getRouteColor(name: string): string {
+  if (name.startsWith('Metro')) return '#00a699'
+  if (name.startsWith('Train')) return '#c0392b'
+  return ROUTE_COLORS[getRouteIdentifier(name)] ?? '#6b4c9a'
 }
 
 async function getRoute(id: number) {
@@ -36,12 +44,13 @@ async function getRoute(id: number) {
       .select('stop_id, arrival_time')
       .eq('route_id', id)
       .order('arrival_time')
-      .limit(200)
+      .limit(1000)
 
     const stopSchedules: Record<number, string[]> = {}
     ;(schedules ?? []).forEach(s => {
       if (!stopSchedules[s.stop_id]) stopSchedules[s.stop_id] = []
-      stopSchedules[s.stop_id].push(s.arrival_time.slice(0, 5))
+      const t = s.arrival_time.slice(0, 5)
+      if (!stopSchedules[s.stop_id].includes(t)) stopSchedules[s.stop_id].push(t)
     })
 
     return { route, stops, stopSchedules }
@@ -68,8 +77,8 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
   }
 
   const { route, stops, stopSchedules } = data
-  const badgeColor = getBadgeColor(route.route_name)
-  const routeNum = getRouteNumber(route.route_name)
+  const routeColor = getRouteColor(route.route_name)
+  const routeNum = getRouteIdentifier(route.route_name)
 
   return (
     <div className="max-w-2xl mx-auto w-full px-4 py-8">
@@ -80,7 +89,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
       </Link>
 
       {/* Route header */}
-      <div className={`${badgeColor} rounded-2xl p-5 mb-6 flex items-center gap-4`}>
+      <div className="rounded-2xl p-5 mb-6 flex items-center gap-4" style={{ backgroundColor: routeColor }}>
         <span className="font-display text-5xl text-white tracking-wider leading-none">{routeNum}</span>
         <div>
           <p className="text-white/60 text-xs uppercase tracking-wider font-semibold">Route</p>
@@ -107,7 +116,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                 <div key={stop.id} className={`flex gap-4 px-4 py-3.5 ${!isLast ? 'border-b border-slate-50' : ''}`}>
                   {/* Stop indicator */}
                   <div className="flex flex-col items-center pt-0.5">
-                    <div className={`w-3 h-3 rounded-full border-2 ${badgeColor.replace('bg-', 'border-')} bg-white`} />
+                    <div className="w-3 h-3 rounded-full border-2 bg-white" style={{ borderColor: routeColor }} />
                     {!isLast && <div className="w-0.5 flex-1 mt-1" style={{ background: 'currentColor', opacity: 0.15 }} />}
                   </div>
 

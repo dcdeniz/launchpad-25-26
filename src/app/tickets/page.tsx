@@ -6,15 +6,19 @@ import { TicketCard } from '@/components/ticket-card'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+function priceForRoute(name: string): number {
+  if (name.startsWith('Metro'))          return 1.60
+  if (name.startsWith('Train'))          return 2.80
+  if (name.includes('Night Bus'))        return 3.00
+  if (name.includes('Express'))          return 1.80
+  return 2.40
+}
+
 const DEMO_ROUTES = [
   { id: 1, route_name: 'Route 9 — City Centre to Quinton',   price: 2.40 },
   { id: 2, route_name: 'Route 16 — City Centre to Bearwood', price: 2.40 },
   { id: 3, route_name: 'Route 82 — Ladywood Express',        price: 1.80 },
 ]
-
-const ROUTE_PRICES: Record<string, number> = {
-  '1': 2.40, '2': 2.40, '3': 1.80,
-}
 
 export default function TicketsPage() {
   const [routes,  setRoutes]  = useState(DEMO_ROUTES)
@@ -31,7 +35,7 @@ export default function TicketsPage() {
       setUser(user)
       if (user) {
         const { data: dbRoutes } = await supabase.from('routes').select('id, route_name')
-        if (dbRoutes?.length) setRoutes(dbRoutes.map(r => ({ ...r, price: ROUTE_PRICES[r.id] ?? 2.40 })))
+        if (dbRoutes?.length) setRoutes(dbRoutes.map(r => ({ ...r, price: priceForRoute(r.route_name) })))
 
         const { data: dbTickets } = await supabase
           .from('tickets')
@@ -52,7 +56,8 @@ export default function TicketsPage() {
 
     const formData = new FormData(e.currentTarget)
     const routeId = formData.get('route_id') as string
-    const price = ROUTE_PRICES[routeId] ?? 2.40
+    const selectedName = routes.find(r => r.id.toString() === routeId)?.route_name ?? ''
+    const price = priceForRoute(selectedName)
     formData.set('price', price.toString())
 
     const result = await purchaseTicket(formData)
@@ -61,7 +66,9 @@ export default function TicketsPage() {
     setLoading(false)
   }
 
-  const selectedPrice = selectedRoute ? (ROUTE_PRICES[selectedRoute] ?? 2.40) : null
+  const selectedPrice = selectedRoute
+    ? priceForRoute(routes.find(r => r.id.toString() === selectedRoute)?.route_name ?? '')
+    : null
 
   return (
     <div className="max-w-2xl mx-auto w-full px-4 py-8">

@@ -8,21 +8,28 @@ interface RouteCardProps {
   lastStop?: string
 }
 
-function getBadgeColor(name: string) {
-  if (name.includes('9'))  return 'bg-[#e63946]'
-  if (name.includes('16')) return 'bg-[#457b9d]'
-  if (name.includes('82')) return 'bg-[#2d6a4f]'
-  return 'bg-[#6b4c9a]'
+function getRouteIdentifier(name: string): string {
+  const beforeDash = name.split(' — ')[0].trim()
+  const parts = beforeDash.split(' ')
+  return parts[parts.length - 1] ?? name.slice(0, 4)
 }
 
-function getRouteNumber(name: string) {
-  const match = name.match(/\d+/)
-  return match ? match[0] : name.slice(0, 2)
+function getBadgeColor(name: string): string {
+  if (name.startsWith('Metro')) return 'bg-[#00a699]'
+  if (name.startsWith('Train')) return 'bg-[#c0392b]'
+  const id = getRouteIdentifier(name)
+  if (id === '9')                   return 'bg-[#e63946]'
+  if (id === '16')                  return 'bg-[#457b9d]'
+  if (id === '82')                  return 'bg-[#2d6a4f]'
+  if (id === '11A' || id === '11C') return 'bg-[#d97706]'
+  if (id === '45')                  return 'bg-[#7c3aed]'
+  if (id === '126')                 return 'bg-[#1e3a5f]'
+  return 'bg-[#6b4c9a]'
 }
 
 export function RouteCard({ id, name, stopCount, firstStop, lastStop }: RouteCardProps) {
   const badgeColor = getBadgeColor(name)
-  const num = getRouteNumber(name)
+  const num = getRouteIdentifier(name)
 
   return (
     <Link href={`/routes/${id}`} className="block group">

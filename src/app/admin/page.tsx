@@ -4,20 +4,20 @@ import Link from 'next/link'
 async function getStats() {
   try {
     const supabase = await createClient()
-    const [routes, stops, vehicles, tickets] = await Promise.all([
+    const [routes, stops, vehicles, schedules] = await Promise.all([
       supabase.from('routes').select('id', { count: 'exact', head: true }),
       supabase.from('stops').select('id', { count: 'exact', head: true }),
       supabase.from('vehicles').select('id', { count: 'exact', head: true }),
-      supabase.from('tickets').select('id', { count: 'exact', head: true }),
+      supabase.from('schedules').select('id', { count: 'exact', head: true }),
     ])
     return {
-      routes:   routes.count   ?? 0,
-      stops:    stops.count    ?? 0,
-      vehicles: vehicles.count ?? 0,
-      tickets:  tickets.count  ?? 0,
+      routes:    routes.count    ?? 0,
+      stops:     stops.count     ?? 0,
+      vehicles:  vehicles.count  ?? 0,
+      schedules: schedules.count ?? 0,
     }
   } catch {
-    return { routes: 0, stops: 0, vehicles: 0, tickets: 0 }
+    return { routes: 0, stops: 0, vehicles: 0, schedules: 0 }
   }
 }
 
@@ -25,10 +25,10 @@ export default async function AdminPage() {
   const stats = await getStats()
 
   const cards = [
-    { label: 'Routes',   value: stats.routes,   href: '/admin/routes',    color: 'bg-[#e63946]' },
-    { label: 'Stops',    value: stats.stops,    href: '/admin/stops',     color: 'bg-[#457b9d]' },
-    { label: 'Vehicles', value: stats.vehicles, href: '/admin/vehicles',  color: 'bg-[#2d6a4f]' },
-    { label: 'Tickets',  value: stats.tickets,  href: '/admin/schedules', color: 'bg-[#6b4c9a]' },
+    { label: 'Routes',    value: stats.routes,    href: '/admin/routes',    color: 'bg-[#e63946]' },
+    { label: 'Stops',     value: stats.stops,     href: '/admin/stops',     color: 'bg-[#457b9d]' },
+    { label: 'Vehicles',  value: stats.vehicles,  href: '/admin/vehicles',  color: 'bg-[#2d6a4f]' },
+    { label: 'Schedules', value: stats.schedules, href: '/admin/schedules', color: 'bg-[#6b4c9a]' },
   ]
 
   return (
