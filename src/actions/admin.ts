@@ -4,6 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+// Checks that the current user is authenticated and has the admin role.
+// Redirects to login or dashboard if either check fails.
+// Returns the authenticated Supabase client so callers can reuse it.
 async function requireAdmin() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -14,6 +17,7 @@ async function requireAdmin() {
   return supabase
 }
 
+// Inserts a new route and clears the cached routes pages so they reload.
 export async function createRoute(formData: FormData): Promise<{ error?: string }> {
   const supabase = await requireAdmin()
   const { error } = await supabase.from('routes').insert({
@@ -25,6 +29,7 @@ export async function createRoute(formData: FormData): Promise<{ error?: string 
   return {}
 }
 
+// Deletes a route by ID. Cascade rules in the schema handle related records.
 export async function deleteRoute(id: number): Promise<void> {
   const supabase = await requireAdmin()
   await supabase.from('routes').delete().eq('id', id)
@@ -32,6 +37,7 @@ export async function deleteRoute(id: number): Promise<void> {
   revalidatePath('/routes')
 }
 
+// Inserts a new stop with optional GPS coordinates.
 export async function createStop(formData: FormData): Promise<{ error?: string }> {
   const supabase = await requireAdmin()
   const lat = formData.get('lat') as string
@@ -46,12 +52,14 @@ export async function createStop(formData: FormData): Promise<{ error?: string }
   return {}
 }
 
+// Deletes a stop by ID.
 export async function deleteStop(id: number): Promise<void> {
   const supabase = await requireAdmin()
   await supabase.from('stops').delete().eq('id', id)
   revalidatePath('/admin/stops')
 }
 
+// Inserts a single timetable entry for a given route and stop.
 export async function createSchedule(formData: FormData): Promise<{ error?: string }> {
   const supabase = await requireAdmin()
   const { error } = await supabase.from('schedules').insert({
@@ -64,12 +72,14 @@ export async function createSchedule(formData: FormData): Promise<{ error?: stri
   return {}
 }
 
+// Deletes a single timetable entry by ID.
 export async function deleteSchedule(id: number): Promise<void> {
   const supabase = await requireAdmin()
   await supabase.from('schedules').delete().eq('id', id)
   revalidatePath('/admin/schedules')
 }
 
+// Inserts a new vehicle, optionally assigning it to a route.
 export async function createVehicle(formData: FormData): Promise<{ error?: string }> {
   const supabase = await requireAdmin()
   const routeId = formData.get('route_id') as string
@@ -82,6 +92,7 @@ export async function createVehicle(formData: FormData): Promise<{ error?: strin
   return {}
 }
 
+// Deletes a vehicle by ID.
 export async function deleteVehicle(id: number): Promise<void> {
   const supabase = await requireAdmin()
   await supabase.from('vehicles').delete().eq('id', id)

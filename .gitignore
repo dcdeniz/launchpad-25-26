@@ -41,9 +41,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude / ai assistant docs
-CLAUDE.md
-AGENTS.md
-*.claude.md
-.claude/
+# editor config
+.idea/
+
 supabase/.temp/

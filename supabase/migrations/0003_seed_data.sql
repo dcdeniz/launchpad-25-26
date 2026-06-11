@@ -1,6 +1,5 @@
--- ============================================================
--- Seed: Ladywood area transport network
--- ============================================================
+-- Seed data for the Ladywood transport network.
+-- Inserts routes, stops, vehicles, route stop sequences, and base timetables.
 
 insert into public.routes (route_name) values
   ('Route 9 — City Centre to Quinton'),
@@ -30,7 +29,7 @@ select 'Single-decker bus', r.id from public.routes r where r.route_name = 'Rout
 union all
 select 'Minibus',            r.id from public.routes r where r.route_name = 'Route 82 — Ladywood Express';
 
--- Route 9
+-- Stop sequence for Route 9
 insert into public.route_stops (route_id, stop_id, stop_order)
 select r.id, s.id, v.stop_order
 from (values
@@ -44,7 +43,7 @@ from (values
 join public.stops  s on s.stop_name  = v.stop_name
 join public.routes r on r.route_name = 'Route 9 — City Centre to Quinton';
 
--- Route 16
+-- Stop sequence for Route 16
 insert into public.route_stops (route_id, stop_id, stop_order)
 select r.id, s.id, v.stop_order
 from (values
@@ -58,7 +57,7 @@ from (values
 join public.stops  s on s.stop_name  = v.stop_name
 join public.routes r on r.route_name = 'Route 16 — City Centre to Bearwood';
 
--- Route 82
+-- Stop sequence for Route 82
 insert into public.route_stops (route_id, stop_id, stop_order)
 select r.id, s.id, v.stop_order
 from (values
@@ -72,7 +71,7 @@ from (values
 join public.stops  s on s.stop_name  = v.stop_name
 join public.routes r on r.route_name = 'Route 82 — Ladywood Express';
 
--- Schedules: Route 9 every 15 min 06:45–22:00
+-- Route 9 timetable: every 15 minutes from 06:45 to 22:00
 insert into public.schedules (route_id, stop_id, arrival_time)
 select r.id, s.id,
   (time '06:45' + (n * interval '15 minutes') + ((rs.stop_order - 1) * interval '2 minutes'))::time
@@ -81,7 +80,7 @@ join public.routes r on r.route_name = 'Route 9 — City Centre to Quinton'
 join public.route_stops rs on rs.route_id = r.id
 join public.stops s on s.id = rs.stop_id;
 
--- Schedules: Route 16 every 20 min 06:00–23:00
+-- Route 16 timetable: every 20 minutes from 06:00 to 23:00
 insert into public.schedules (route_id, stop_id, arrival_time)
 select r.id, s.id,
   (time '06:00' + (n * interval '20 minutes') + ((rs.stop_order - 1) * interval '3 minutes'))::time
@@ -90,7 +89,7 @@ join public.routes r on r.route_name = 'Route 16 — City Centre to Bearwood'
 join public.route_stops rs on rs.route_id = r.id
 join public.stops s on s.id = rs.stop_id;
 
--- Schedules: Route 82 every 30 min 07:30–20:30
+-- Route 82 timetable: every 30 minutes from 07:30 to 20:30
 insert into public.schedules (route_id, stop_id, arrival_time)
 select r.id, s.id,
   (time '07:30' + (n * interval '30 minutes') + ((rs.stop_order - 1) * interval '4 minutes'))::time

@@ -33,11 +33,11 @@ export default async function HomePage() {
   return (
     <div className="bg-slate-50 min-h-screen">
 
-      {/* ── Hero: two-column ─────────────────────────────────────── */}
+      {/* Two-column hero section */}
       <section className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 lg:gap-8 items-start">
 
-          {/* LEFT — styled hero panel */}
+          {/* Left column with decorative transit branding panel */}
           <div>
             <div
               className="rounded-2xl overflow-hidden relative"
@@ -86,7 +86,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* RIGHT — journey planner */}
+          {/* Right column with the journey planner form */}
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <p className="font-display text-xl text-[#0b1f3a] tracking-wider mb-4">PLAN YOUR JOURNEY</p>
             <JourneyPlanner stops={stops as Stop[]} />
@@ -94,7 +94,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Services ─────────────────────────────────────────────── */}
+      {/* Route services grid showing the first six routes */}
       <section className="max-w-6xl mx-auto px-4 pb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-2xl text-[#0b1f3a] tracking-wider">SERVICES</h2>
@@ -111,7 +111,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Footer quick links ───────────────────────────────────── */}
+      {/* Quick navigation tiles at the bottom of the page */}
       <section className="max-w-6xl mx-auto px-4 pb-12">
         <div className="grid grid-cols-3 gap-3">
           {[

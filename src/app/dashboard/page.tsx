@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       {/* Quick actions */}
       <div className="grid grid-cols-2 gap-3 mb-8">
         {[
-          { href: '/',        label: 'PLAN JOURNEY',  sub: 'AI-powered planner', color: 'bg-[#f5a623]', text: 'text-[#0b1f3a]' },
+          { href: '/',        label: 'PLAN JOURNEY',  sub: 'Journey planner', color: 'bg-[#f5a623]', text: 'text-[#0b1f3a]' },
           { href: '/routes',  label: 'VIEW ROUTES',   sub: 'All services',        color: 'bg-white',     text: 'text-[#0b1f3a]' },
           { href: '/tickets', label: 'MY TICKETS',    sub: 'Purchase & manage',   color: 'bg-white',     text: 'text-[#0b1f3a]' },
           { href: '/routes',  label: 'LIVE TIMES',    sub: 'Stop timetables',     color: 'bg-white',     text: 'text-[#0b1f3a]' },
