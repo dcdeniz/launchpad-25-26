@@ -11,6 +11,7 @@ export async function signUp(formData: FormData): Promise<{ error?: string }> {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
     options: {
+      emailRedirectTo: 'https://launchpad-25-26-lake.vercel.app/auth/callback',
       data: {
         first_name: formData.get('first_name') as string,
         last_name: formData.get('last_name') as string,
