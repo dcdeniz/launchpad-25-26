@@ -46,11 +46,20 @@ async function getRoute(id: number) {
       .order('arrival_time')
       .limit(1000)
 
+    // Sort times using transit service-day convention: 00:00–04:59 sorts after 23:59
+    function serviceMinutes(t: string) {
+      const [h, m] = t.split(':').map(Number)
+      return h < 5 ? h * 60 + m + 1440 : h * 60 + m
+    }
+
     const stopSchedules: Record<number, string[]> = {}
     ;(schedules ?? []).forEach(s => {
       if (!stopSchedules[s.stop_id]) stopSchedules[s.stop_id] = []
       const t = s.arrival_time.slice(0, 5)
       if (!stopSchedules[s.stop_id].includes(t)) stopSchedules[s.stop_id].push(t)
+    })
+    Object.keys(stopSchedules).forEach(k => {
+      stopSchedules[Number(k)].sort((a, b) => serviceMinutes(a) - serviceMinutes(b))
     })
 
     return { route, stops, stopSchedules }
