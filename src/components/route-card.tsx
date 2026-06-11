@@ -36,7 +36,7 @@ export function RouteCard({ id, name, stopCount, firstStop, lastStop }: RouteCar
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-200 group-hover:shadow-md group-hover:-translate-y-0.5 group-active:scale-[0.99]">
         <div className="flex items-stretch">
           {/* Route number badge */}
-          <div className={`${badgeColor} flex items-center justify-center w-16 shrink-0`}>
+          <div className={`${badgeColor} flex items-center justify-center w-20 shrink-0`}>
             <span className="font-display text-2xl text-white tracking-wider">{num}</span>
           </div>
 

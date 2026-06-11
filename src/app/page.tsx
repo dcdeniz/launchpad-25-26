@@ -1,6 +1,7 @@
 import { JourneyPlanner } from '@/components/journey-planner'
 import { RouteCard } from '@/components/route-card'
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import type { Stop, Route } from '@/types'
 
 async function getData() {
@@ -16,114 +17,124 @@ async function getData() {
   }
 }
 
+const DEMO_ROUTES = [
+  { id: 1, route_name: 'Route 9 — City Centre to Quinton' },
+  { id: 2, route_name: 'Route 16 — City Centre to Bearwood' },
+  { id: 3, route_name: 'Route 82 — Ladywood Express' },
+  { id: 4, route_name: 'Metro T1 — Wolverhampton to Birmingham Centenary Square' },
+  { id: 5, route_name: 'Metro T2 — Edgbaston to Jewellery Quarter' },
+  { id: 6, route_name: 'Train SN1 — Birmingham New Street to Five Ways' },
+]
+
 export default async function HomePage() {
   const { stops, routes } = await getData()
+  const displayRoutes = routes.length > 0 ? (routes as Route[]).slice(0, 6) : DEMO_ROUTES
 
   return (
-    <>
-      {/* ── Hero ────────────────────────────────────────────────── */}
-      <section className="hero-bg px-4 py-12 sm:py-16">
-        <div className="max-w-2xl mx-auto">
-          {/* Headline */}
-          <div className="mb-8 animate-fade-up">
-            <p className="text-[#f5a623] text-xs font-semibold uppercase tracking-[0.2em] mb-3 stagger-1 animate-fade-up">
-              Birmingham · Ladywood
-            </p>
-            <h1 className="font-display text-[clamp(3rem,12vw,5.5rem)] leading-[0.92] text-white tracking-wide">
-              GETTING<br />AROUND<br />
-              <span className="text-[#f5a623]">LADYWOOD</span>
-            </h1>
-            <p className="mt-4 text-white/60 text-sm sm:text-base leading-relaxed stagger-2 animate-fade-up">
-              Buses · Trams · Trains — unified in one place.<br className="hidden sm:block" />
+    <div className="bg-slate-50 min-h-screen">
+
+      {/* ── Hero: two-column ─────────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 lg:gap-8 items-start">
+
+          {/* LEFT — styled hero panel */}
+          <div>
+            <div
+              className="rounded-2xl overflow-hidden relative"
+              style={{
+                background: '#0b1f3a',
+                backgroundImage: `
+                  radial-gradient(ellipse at 20% 70%, rgba(245,166,35,0.15) 0%, transparent 55%),
+                  linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+                `,
+                backgroundSize: 'auto, 40px 40px, 40px 40px',
+                minHeight: '320px',
+              }}
+            >
+              {/* Decorative route badges */}
+              <div className="absolute inset-0 p-8 flex flex-col justify-between">
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: '9',  color: '#e63946' }, { id: '16', color: '#457b9d' },
+                    { id: '82', color: '#2d6a4f' }, { id: 'T1', color: '#00a699' },
+                    { id: 'T2', color: '#00a699' }, { id: 'SN1', color: '#c0392b' },
+                    { id: '11A', color: '#d97706' }, { id: '45', color: '#7c3aed' },
+                  ].map(({ id, color }) => (
+                    <span
+                      key={id}
+                      className="font-display text-white text-lg tracking-widest px-2.5 py-0.5 rounded"
+                      style={{ background: color }}
+                    >
+                      {id}
+                    </span>
+                  ))}
+                </div>
+                <div>
+                  <p className="font-display text-[clamp(2.5rem,8vw,4rem)] leading-none text-white tracking-wide">
+                    LADYWOOD<br />
+                    <span className="text-[#f5a623]">TRANSIT</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Caption */}
+            <p className="mt-3 text-slate-500 text-sm leading-relaxed px-1">
+              Buses · Trams · Trains — all services unified in one place.
               Plan your journey across the Ladywood area instantly.
             </p>
           </div>
 
-          {/* Journey planner */}
-          <div className="stagger-3 animate-fade-up">
+          {/* RIGHT — journey planner */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <p className="font-display text-xl text-[#0b1f3a] tracking-wider mb-4">PLAN YOUR JOURNEY</p>
             <JourneyPlanner stops={stops as Stop[]} />
           </div>
         </div>
       </section>
 
-      {/* ── Quick stats strip ────────────────────────────────────── */}
-      <div className="bg-[#f5a623]">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-6 overflow-x-auto">
-          {[
-            { label: 'Routes', value: routes.length || 3 },
-            { label: 'Stops',  value: stops.length  || 10 },
-            { label: 'Area',   value: 'Ladywood' },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex items-center gap-2 shrink-0">
-              <span className="font-display text-2xl text-[#0b1f3a] tracking-wider">{value}</span>
-              <span className="text-xs font-semibold text-[#0b1f3a]/60 uppercase tracking-wider">{label}</span>
+      {/* ── Services ─────────────────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-4 pb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display text-2xl text-[#0b1f3a] tracking-wider">SERVICES</h2>
+          <Link href="/routes" className="text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-[#0b1f3a] transition-colors">
+            View all →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {displayRoutes.map((route, i) => (
+            <div key={route.id} className={`animate-fade-up stagger-${Math.min(i + 1, 5)}`}>
+              <RouteCard id={route.id} name={route.route_name} />
             </div>
           ))}
         </div>
-      </div>
-
-      {/* ── Routes section ───────────────────────────────────────── */}
-      <section className="px-4 py-8 max-w-2xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-2xl text-[#0b1f3a] tracking-wider">SERVICES</h2>
-          <a href="/routes" className="text-xs font-semibold text-[#0b1f3a]/50 uppercase tracking-wider hover:text-[#0b1f3a] transition-colors">
-            View all →
-          </a>
-        </div>
-
-        {routes.length > 0 ? (
-          <div className="space-y-3">
-            {(routes as Route[]).slice(0, 6).map((route, i) => (
-              <div key={route.id} className={`animate-fade-up stagger-${Math.min(i + 1, 5)}`}>
-                <RouteCard id={route.id} name={route.route_name} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {[
-              { id: 0, route_name: 'Route 9 — City Centre to Quinton' },
-              { id: 0, route_name: 'Route 16 — City Centre to Bearwood' },
-              { id: 0, route_name: 'Route 82 — Ladywood Express' },
-            ].map((r, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden opacity-60">
-                <div className="flex items-stretch">
-                  <div className={`${['bg-[#e63946]','bg-[#457b9d]','bg-[#2d6a4f]'][i]} flex items-center justify-center w-16`}>
-                    <span className="font-display text-2xl text-white">{['9','16','82'][i]}</span>
-                  </div>
-                  <div className="flex-1 p-4">
-                    <p className="font-semibold text-[#0b1f3a] text-sm">{r.route_name}</p>
-                    <p className="text-xs text-slate-400 mt-1">Connect Supabase to load live data</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
-      {/* ── Info strip ───────────────────────────────────────────── */}
-      <section className="mt-auto bg-[#0b1f3a] px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <p className="font-display text-lg text-white/40 tracking-wider mb-4">QUICK LINKS</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              { href: '/routes',    label: 'Browse Routes',  sub: 'All services' },
-              { href: '/tickets',   label: 'My Tickets',     sub: 'Purchase & view' },
-              { href: '/signup',    label: 'Create Account', sub: 'Free to join' },
-            ].map(({ href, label, sub }) => (
-              <a
-                key={href}
-                href={href}
-                className="block bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 transition-colors group"
-              >
-                <p className="text-sm font-semibold text-white group-hover:text-[#f5a623] transition-colors">{label}</p>
-                <p className="text-xs text-white/40 mt-0.5">{sub}</p>
-              </a>
-            ))}
-          </div>
+      {/* ── Footer quick links ───────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { href: '/routes',    label: 'Stops',    sub: 'Browse all stops',     accent: '#457b9d' },
+            { href: '/tickets',   label: 'Tickets',  sub: 'Purchase & manage',    accent: '#f5a623' },
+            { href: '/dashboard', label: 'Account',  sub: 'Your profile & trips', accent: '#2d6a4f' },
+          ].map(({ href, label, sub, accent }) => (
+            <Link
+              key={href}
+              href={href}
+              className="block bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-md transition-all group overflow-hidden relative"
+            >
+              <div
+                className="absolute bottom-0 right-0 w-20 h-20 rounded-tl-full opacity-10"
+                style={{ background: accent }}
+              />
+              <p className="font-display text-xl text-[#0b1f3a] tracking-wider group-hover:text-[#0b1f3a]">{label}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
+            </Link>
+          ))}
         </div>
       </section>
-    </>
+
+    </div>
   )
 }
