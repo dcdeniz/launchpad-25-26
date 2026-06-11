@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+// Creates a Supabase client that runs on the server and reads the session from cookies.
 export async function createClient() {
   const cookieStore = await cookies();
 
@@ -18,7 +19,7 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // Called from a Server Component — cookie mutations are a no-op
+            // Server Components cannot write cookies so writes are silently ignored here.
           }
         },
       },

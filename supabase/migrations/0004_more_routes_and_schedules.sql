@@ -1,8 +1,6 @@
--- ============================================================
--- Extra routes, stops, vehicles, and dense timetable data
--- ============================================================
+-- Extra routes, stops, vehicles, and dense timetable data for the Ladywood network.
 
--- ── New routes ────────────────────────────────────────────────
+-- New routes
 insert into public.routes (route_name) values
   ('Metro T1 — Wolverhampton to Birmingham Centenary Square'),
   ('Metro T2 — Edgbaston to Jewellery Quarter'),
@@ -12,7 +10,7 @@ insert into public.routes (route_name) values
   ('Route 45 — Ladywood to Selly Oak'),
   ('Route 126 — Jewellery Quarter to Bearwood Night Bus');
 
--- ── New stops ─────────────────────────────────────────────────
+-- New stops
 insert into public.stops (stop_name, lat, lng) values
   ('Jewellery Quarter Tram Stop',          52.4891, -1.9173),
   ('Centenary Square Tram Stop',           52.4779, -1.9113),
@@ -35,7 +33,7 @@ insert into public.stops (stop_name, lat, lng) values
   ('Hunters Road',                         52.4915, -1.9297),
   ('Spring Hill',                          52.4878, -1.9184);
 
--- ── Vehicles for new routes ───────────────────────────────────
+-- Vehicles for the new routes
 insert into public.vehicles (vehicle_type, route_id)
 select 'CAF Urbos Tram',   r.id from public.routes r where r.route_name = 'Metro T1 — Wolverhampton to Birmingham Centenary Square'
 union all
@@ -61,7 +59,7 @@ select 'Single-decker bus',r.id from public.routes r where r.route_name = 'Route
 union all
 select 'Single-decker bus',r.id from public.routes r where r.route_name = 'Route 126 — Jewellery Quarter to Bearwood Night Bus';
 
--- ── Route stops ───────────────────────────────────────────────
+-- Route stops for each new route
 
 -- Metro T1 (6 stops)
 insert into public.route_stops (route_id, stop_id, stop_order)
@@ -116,7 +114,7 @@ from (values
 join public.stops  s on s.stop_name  = v.stop_name
 join public.routes r on r.route_name = 'Route 11A — City Centre Outer Circle (Clockwise)';
 
--- Route 11C anti-clockwise outer circle (8 stops — reverse of 11A)
+-- Route 11C anti-clockwise outer circle (8 stops, reverse of 11A)
 insert into public.route_stops (route_id, stop_id, stop_order)
 select r.id, s.id, v.stop_order
 from (values
@@ -161,7 +159,7 @@ from (values
 join public.stops  s on s.stop_name  = v.stop_name
 join public.routes r on r.route_name = 'Route 126 — Jewellery Quarter to Bearwood Night Bus';
 
--- ── Dense schedules ───────────────────────────────────────────
+-- Dense timetables for each route
 -- Metro T1: every 8 min 05:30–00:00 (peak), denser during rush hours
 -- Represented as 3 bands: early (8 min), peak (5 min 07:30–09:30 & 16:30–18:30), standard (8 min)
 
@@ -318,7 +316,7 @@ join public.routes r on r.route_name = 'Route 126 — Jewellery Quarter to Bearw
 join public.route_stops rs on rs.route_id = r.id
 join public.stops s on s.id = rs.stop_id;
 
--- ── Backfill denser schedules on existing bus routes ──────────
+-- Backfill denser peak-hour schedules on the original three bus routes
 -- Route 9: add AM peak (every 7 min 07:30–09:00) and PM peak (every 7 min 16:30–18:00)
 insert into public.schedules (route_id, stop_id, arrival_time)
 select r.id, s.id,

@@ -1,4 +1,4 @@
--- Profiles (replaces Account — password handled by Supabase Auth)
+-- Profiles extends auth.users with display name and role for each registered user.
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text unique not null,

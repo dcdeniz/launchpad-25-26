@@ -83,7 +83,7 @@ export function Nav({ user }: NavProps) {
 
   return (
     <>
-      {/* ── Top bar ───────────────────────────────────────────── */}
+      {/* Sticky top navigation bar */}
       <header className="sticky top-0 z-40 bg-[#0b1f3a] shadow-lg">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           {/* Logo */}
@@ -92,7 +92,7 @@ export function Nav({ user }: NavProps) {
             <span className="hidden sm:block text-white font-display text-xl tracking-wider">LADYWOOD TRANSIT</span>
           </Link>
 
-          {/* Desktop centre nav — boxed links */}
+          {/* Centre navigation links shown on desktop screens only */}
           <nav className="hidden md:flex items-center gap-2">
             <Link href="/" className={`text-sm font-medium px-4 py-1.5 rounded border transition-colors ${
               isActive('/') ? 'border-[#f5a623] text-[#f5a623]' : 'border-white/25 text-white/75 hover:border-white/50 hover:text-white'
@@ -113,7 +113,7 @@ export function Nav({ user }: NavProps) {
             )}
           </nav>
 
-          {/* Desktop auth — boxed buttons */}
+          {/* Sign in and register buttons shown on desktop screens only */}
           <div className="hidden md:flex items-center gap-2">
             {user ? (
               <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ export function Nav({ user }: NavProps) {
         )}
       </header>
 
-      {/* ── Mobile bottom tab bar ─────────────────────────────── */}
+      {/* Fixed bottom tab bar shown on mobile screens only */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 safe-area-pb">
         <div className="grid h-16" style={{ gridTemplateColumns: `repeat(${bottomTabs.length}, 1fr)` }}>
           {bottomTabs.map(({ href, label, Icon }) => {

@@ -115,7 +115,7 @@ export function JourneyPlanner({ stops }: Props) {
 
       {plan && (
         <div className="animate-fade-up border-l-4 border-[#0b1f3a] bg-slate-50 rounded-r-xl pl-4 pr-4 py-3">
-          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.12em] mb-1.5">AI Journey Plan</p>
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.12em] mb-1.5">Journey Plan</p>
           <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line">{plan}</p>
         </div>
       )}
