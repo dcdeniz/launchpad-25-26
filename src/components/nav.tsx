@@ -92,34 +92,42 @@ export function Nav({ user }: NavProps) {
             <span className="hidden sm:block text-white font-display text-xl tracking-wider">LADYWOOD TRANSIT</span>
           </Link>
 
-          {/* Desktop nav links */}
-          <nav className="hidden md:flex items-center gap-6">
-            {desktopLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(href) ? 'text-[#f5a623]' : 'text-white/75 hover:text-white'
-                }`}
-              >
-                {label}
+          {/* Desktop centre nav — boxed links */}
+          <nav className="hidden md:flex items-center gap-2">
+            <Link href="/" className={`text-sm font-medium px-4 py-1.5 rounded border transition-colors ${
+              isActive('/') ? 'border-[#f5a623] text-[#f5a623]' : 'border-white/25 text-white/75 hover:border-white/50 hover:text-white'
+            }`}>
+              Journey Planner
+            </Link>
+            <Link href="/routes" className={`text-sm font-medium px-4 py-1.5 rounded border transition-colors ${
+              isActive('/routes') ? 'border-[#f5a623] text-[#f5a623]' : 'border-white/25 text-white/75 hover:border-white/50 hover:text-white'
+            }`}>
+              Routes
+            </Link>
+            {user?.role === 'admin' && (
+              <Link href="/admin" className={`text-sm font-medium px-4 py-1.5 rounded border transition-colors ${
+                isActive('/admin') ? 'border-[#f5a623] text-[#f5a623]' : 'border-white/25 text-white/75 hover:border-white/50 hover:text-white'
+              }`}>
+                Admin
               </Link>
-            ))}
+            )}
           </nav>
 
-          {/* Desktop auth */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Desktop auth — boxed buttons */}
+          <div className="hidden md:flex items-center gap-2">
             {user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-xs text-white/50">{user.email}</span>
+              <div className="flex items-center gap-3">
+                <Link href="/dashboard" className="text-sm font-medium px-4 py-1.5 rounded border border-white/25 text-white/75 hover:border-white/50 hover:text-white transition-colors">
+                  {user.first_name || user.email}
+                </Link>
                 <form action={signOut}>
-                  <button className="text-sm text-white/60 hover:text-white transition-colors">Sign out</button>
+                  <button className="text-sm font-medium px-4 py-1.5 rounded border border-white/25 text-white/60 hover:text-white hover:border-white/50 transition-colors">Sign out</button>
                 </form>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <Link href="/login"  className="text-sm text-white/70 hover:text-white transition-colors">Sign in</Link>
-                <Link href="/signup" className="bg-[#f5a623] hover:bg-[#d4891a] text-[#0b1f3a] text-sm font-semibold px-4 py-1.5 rounded-full transition-colors">
+              <div className="flex items-center gap-2">
+                <Link href="/login"  className="text-sm font-medium px-4 py-1.5 rounded border border-white/25 text-white/75 hover:border-white/50 hover:text-white transition-colors">Sign In</Link>
+                <Link href="/signup" className="text-sm font-semibold px-4 py-1.5 rounded border border-[#f5a623] bg-[#f5a623] hover:bg-[#d4891a] hover:border-[#d4891a] text-[#0b1f3a] transition-colors">
                   Register
                 </Link>
               </div>

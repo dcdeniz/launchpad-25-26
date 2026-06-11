@@ -5,25 +5,45 @@ import { createSchedule, deleteSchedule } from '@/actions/admin'
 import { createClient } from '@/lib/supabase/client'
 
 export default function AdminSchedulesPage() {
-  const [schedules, setSchedules] = useState<any[]>([])
-  const [routes,    setRoutes]    = useState<any[]>([])
-  const [stops,     setStops]     = useState<any[]>([])
-  const [error,     setError]     = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [schedules,   setSchedules]   = useState<any[]>([])
+  const [total,       setTotal]       = useState<number>(0)
+  const [routes,      setRoutes]      = useState<any[]>([])
+  const [stops,       setStops]       = useState<any[]>([])
+  const [filterRoute, setFilterRoute] = useState('')
+  const [error,       setError]       = useState<string | null>(null)
+  const [isPending, startTransition]  = useTransition()
 
-  async function load() {
+  async function load(routeFilter = filterRoute) {
     const supabase = createClient()
-    const [s, r, st] = await Promise.all([
-      supabase.from('schedules').select('id, arrival_time, routes(route_name), stops(stop_name)').order('arrival_time').limit(50),
-      supabase.from('routes').select('id, route_name'),
+    const [r, st] = await Promise.all([
+      supabase.from('routes').select('id, route_name').order('route_name'),
       supabase.from('stops').select('id, stop_name').order('stop_name'),
     ])
-    setSchedules(s.data ?? [])
     setRoutes(r.data ?? [])
     setStops(st.data ?? [])
+
+    let countQuery = supabase.from('schedules').select('id', { count: 'exact', head: true })
+    let listQuery  = supabase.from('schedules')
+      .select('id, arrival_time, routes(route_name), stops(stop_name)')
+      .order('arrival_time')
+      .limit(100)
+
+    if (routeFilter) {
+      countQuery = countQuery.eq('route_id', routeFilter) as any
+      listQuery  = listQuery.eq('route_id', routeFilter) as any
+    }
+
+    const [cnt, list] = await Promise.all([countQuery, listQuery])
+    setTotal(cnt.count ?? 0)
+    setSchedules(list.data ?? [])
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleRouteFilter(e: React.ChangeEvent<HTMLSelectElement>) {
+    setFilterRoute(e.target.value)
+    load(e.target.value)
+  }
 
   async function handleAdd(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -66,11 +86,25 @@ export default function AdminSchedulesPage() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-slate-100">
-          <p className="font-display text-xl text-[#0b1f3a] tracking-wider">SCHEDULE ENTRIES ({schedules.length})</p>
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between gap-3 flex-wrap">
+          <p className="font-display text-xl text-[#0b1f3a] tracking-wider">
+            SCHEDULES
+            <span className="ml-2 text-sm font-sans font-normal text-slate-400">
+              {filterRoute ? `${schedules.length} of ${total}` : `${total} total`}
+              {!filterRoute && schedules.length < total && ` — showing ${schedules.length}`}
+            </span>
+          </p>
+          <select
+            value={filterRoute}
+            onChange={handleRouteFilter}
+            className="border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#0b1f3a] appearance-none bg-white text-slate-600 max-w-[220px]"
+          >
+            <option value="">All routes</option>
+            {routes.map(r => <option key={r.id} value={r.id}>{r.route_name}</option>)}
+          </select>
         </div>
         {schedules.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-slate-400">No schedule entries yet.</p>
+          <p className="px-5 py-8 text-center text-sm text-slate-400">No schedule entries.</p>
         ) : (
           <div className="divide-y divide-slate-50">
             {schedules.map(s => (
